@@ -1,4 +1,3 @@
-
 # Graphics Library in C
 
 Date: 29.05.23
@@ -25,4 +24,9 @@ Date: 29.05.23
 __References:__
 - [https://en.wikipedia.org/wiki/Vornoi_diagram]
 - PPM Image Format: [https://en.wikipedia.org/wiki/Netpbm]
+
+# GLFW example
+
+Date: 03.06.23
+__References:__
 
