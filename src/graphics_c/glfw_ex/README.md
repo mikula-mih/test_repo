@@ -1,4 +1,4 @@
-# GLFW
+# GLFW - Graphics Library Framework
 > GLFW integration into project git
 ```bash
 git remote add glfw https://github.com/glfw/glfw.git
@@ -7,10 +7,32 @@ git subtree add --prefix=external/glfw glfw master --squash
 > Latest version
 ```bash
 git subtree pull --prefix=external/glfw glfw master --squash
-
 ```
 
+> Cmake
+```bash
+mkdir build && cd build
+cmake ..
+cmake --build . --config Release
+```
 
+## GLAD
+> generate Glad
+- [https://glad.dav1d.de]
+- Specification: OpenGL
+- Profile: Core
+- Version: <version>
+- Generate
+```bash
+unzip glad.zip
+mv glad external/
+cd external/glad && touch CMakeLists.txt
+```
+- edit main CMakeLists.txt
+```
+add_subdirectory(external/glad)
+target_link_libraries(${PROJECT_NAME} glad)
+```
 
 
 
