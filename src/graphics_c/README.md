@@ -3,6 +3,7 @@
 
 Date: 29.05.23
 __References:__
+- PPM format: [http://people.uncw.edu/tompkinsj/112/texnh/assignments/imageFormat.html]
 
 > `olive.c`
 
@@ -14,6 +15,9 @@ __References:__
 # OpenGL in C
 Date: 01.06.23
 __References:__
+- [https://en.wikipedia.org/wiki/Z-buffering]
+- [https://github.com/tsoding/opengl-template]
+- (GLFW: an OpenGL library)[https://www.glfw.org]
 
 # Pixel Graphics in C
 

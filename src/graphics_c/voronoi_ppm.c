@@ -5,10 +5,11 @@
 #include <errno.h>
 #include <assert.h>
 #include <time.h>
+#include <limits.h>
 
-#define WIDTH 800
-#define HEIGHT 600
-#define SEEDS_COUNT 30
+#define WIDTH 800 
+#define HEIGHT 600 
+#define SEEDS_COUNT 20
 
 #define OUTPUT_FILE_PATH "output.ppm"
 
@@ -43,7 +44,7 @@ typedef struct {
 } Point32;
 
 static Color32 image[HEIGHT][WIDTH];
-// static Point32 *image_as_points[WIDTH] = image;
+static int depth[HEIGHT][WIDTH];
 static Point seeds[SEEDS_COUNT];
 static Color32 palette[] = {
   GRUVBOX_BRIGHT_RED,
@@ -176,38 +177,44 @@ void render_point_gradient(void)
   }
 }
 
-void apply_next_seed_color(Color32 next_seed_color)
+void apply_next_seed(size_t seed_index)
 {
-  Point next_seed = color_to_point(next_seed_color);
+  Point seed = seeds[seed_index];
+  Color32 color = palette[seed_index%palette_count];
+
   for (int y = 0; y < HEIGHT; ++y) {
     for (int x = 0; x < WIDTH; ++x) {
-      Point curr_seed = color_to_point(image[y][x]);
-      int c = sqr_dist(next_seed.x, next_seed.y, x, y) < sqr_dist(curr_seed.x, curr_seed.y, x, y);
-      image[y][x] = c * next_seed_color + (1 - c) *image[y][x];
+      int dx = x - seed.x;
+      int dy = y - seed.y;
+      int d = dx*dx + dy*dy;
+      if (d < depth[y][x]) {
+        depth[y][x] = d;
+        image[y][x] = color;
+      }
     }
   }
 }
 
 void render_voronoi_interesting(void)
 {
-  fill_image(point_to_color(seeds[0]));
-  for (size_t i = 1; i < SEEDS_COUNT; ++i) {
-    apply_next_seed_color(point_to_color(seeds[i]));
+  for (int y = 0; y < HEIGHT; ++y) {
+    for (int x = 0; x < WIDTH; ++x) {
+      depth[y][x] = INT_MAX;
+    }
   }
-  render_seed_markers();
   
-  // fill_circle(seeds[0].x, seeds[0].y, SEED_MARKER_RADIUS, COLOR_WHITE);
+  for (size_t i = 0; i < SEEDS_COUNT; ++i) {
+    apply_next_seed(i);
+  }
 }
-
 
 int main()
 {
   srand(time(0));
   fill_image(BACKGROUND_COLOR);
   generate_random_seeds();
-  // render_voronoi_naive();
-  // render_seed_markers();
   render_voronoi_interesting();
+  render_seed_markers();
   save_image_as_ppm(OUTPUT_FILE_PATH);
   return 0;
 }
