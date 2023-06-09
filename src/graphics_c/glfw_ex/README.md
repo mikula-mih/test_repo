@@ -1,3 +1,15 @@
+# Stack
+
+- GLFW
+    [https://www.glfw.org]
+- OpenGL
+    [https://learnopengl.com]
+- glm - OpenGL Mathematics
+    [https://glm.g-truc.net/0.9.9/index.html]
+- WebGL
+    [https://webglfundamentals.org]
+    [https://learnwebgl.brown37.net/index.html]
+
 # GLFW - Graphics Library Framework
 > GLFW integration into project git
 ```bash
@@ -33,6 +45,23 @@ cd external/glad && touch CMakeLists.txt
 add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} glad)
 ```
+
+# GLM
+```bash
+
+```
+
+### Coordinate System
+- `Local space` or `Object space` --> __model matrix__ -->
+- `World space` --> __view matrix__ -->
+- `View space` or `Eye space` --> __projection matrix__ -->
+- `Clip space` --> __viewport transform__ -->
+- `Screen space`
+
+# RapidJSON
+
+
+
 
 
 
