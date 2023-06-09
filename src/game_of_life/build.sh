@@ -8,7 +8,7 @@ if [ ! -d $BUILD ]; then
   mkdir $BUILD
 fi
 
-clang -Wall -Wextra main.c -o build/main
+clang -O3 -Wall -Wextra main.c -o build/main -lm
 ./build/main
 
 if [ -d $BUILD ]; then

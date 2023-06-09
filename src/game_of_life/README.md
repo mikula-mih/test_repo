@@ -5,3 +5,5 @@ __References:__
 
 - `Generalization of Conway's "Game of Life" to a continuous domain - SmoothLife` paper
 - `Lenia - Biology of Artificial Life` paper
+- [SmoothLife implementation][https://sourceforge.net/projects/smoothlife/]
+
