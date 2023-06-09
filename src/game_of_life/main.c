@@ -7,8 +7,8 @@
  * Symbolic Constants
  * ================== */
 
-#define WIDTH 50
-#define HEIGHT 50
+#define WIDTH 200
+#define HEIGHT 200
 
 const char level[] = " ._=coaA@#";
 #define level_count (sizeof(level)/sizeof(level[0]) - 1)
@@ -24,7 +24,7 @@ Cell diff_grid[HEIGHT][WIDTH] = { { (Cell) {.0f, .0f} } };
 
 float grid[HEIGHT][WIDTH] = { {.0f} };
 float grid_diff[HEIGHT][WIDTH] = { {.0f} };
-const float ra = 21.0f; // ring outer
+const float ra = 9.0f; // ring outer
 const float ri = ra/3; // ring inner
 const float alpha = 0.028f; // alpha_n
 // const float alpha_m = 0.147f;
@@ -32,7 +32,7 @@ const float b1 = 0.278f;
 const float b2 = 0.368f;
 const float d1 = 0.267f;
 const float d2 = 0.445f;
-const float dt = .1f;
+const float dt = 0.05f;
 
 /* ===================
  * Function Prototypes
@@ -86,10 +86,16 @@ void display_grid_diff_(float grid[HEIGHT][WIDTH])
 {
   for (size_t i = 0; i < HEIGHT; ++i) {
     for (size_t j = 0; j < WIDTH; ++j) {
-      printf("%5f ", grid[i][j]);
+      printf("%f ", grid[i][j]);
     }
     puts("");
   }
+}
+
+void clamp(float *x, float lower, float higher)
+{
+  if (*x < lower) *x = lower; 
+  if (*x > higher) *x = higher; 
 }
 
 void display_grid_diff(void)
@@ -99,6 +105,7 @@ void display_grid_diff(void)
       printf("%e ", grid_diff[y][x]);
 
       grid[x][y] += dt * grid_diff[y][x];
+      clamp(&grid[y][x], 0, 1);
     }
     puts("");
   }
@@ -110,18 +117,18 @@ int main(void)
   srand(now = time(0));
   printf("Time now = %d\n", now);
   
-  // printf("%p\n", grid);
   set_grid_rand(&grid[0][0]);
-  // printf("%p\n", grid);
-
+/*
   display_grid();
-  display_grid_diff_(grid);
-  // display_diff_grid(grid);
+  // display_grid_diff_(grid);
+  //
   compute_grid_diff();
+  
+  // display_grid_diff_(grid_diff);
   display_grid_diff();
 
-  display_grid();
   display_grid_diff_(grid);
+  display_grid();
 
   // TEST CODE ====================
 
@@ -152,6 +159,18 @@ int main(void)
   m /= M;
 
   printf("s(n, m) = %e\n", s(n, m));
+*/
+  display_grid();
+  for (;;) {
+    compute_grid_diff();
+    for (size_t y = 0; y < HEIGHT; ++y) {
+      for (size_t x = 0; x < WIDTH; ++x) {
+        grid[y][x] += dt * grid_diff[y][x];
+        clamp(&grid[y][x], 0, 1);
+      }
+    }
+    display_grid();
+  }
 
   // TEST END =====================
 
@@ -173,19 +192,24 @@ float rand_float(void)
 
 void set_grid_rand(float *ptr_grid)
 {
-  for (size_t i = 0; i < HEIGHT*WIDTH; ++i)
-    *ptr_grid++ = rand_float();
+  size_t w = WIDTH/2;
+  size_t h = HEIGHT/2;
+  for (size_t i = 0; i < h; ++i) {
+    for (size_t j = 0; j < w; ++j) {
+      // *ptr_grid++ = rand_float();
+      grid[i + h/2][j+ w/2] = rand_float();
+    }
+  }
 }
 
 void display_grid(void)
 {
   for (size_t i = 0; i < HEIGHT; ++i) {
     for (size_t j = 0; j < WIDTH; ++j) {
-      //printf("%5.3f ", grid[i][j] = rand_float());
       char c = level[ (int) (grid[i][j] * (level_count - 1)) ];
-      printf("%c", c);
+      fputc(c, stdout);
     }
-    puts("");
+    fputc('\n', stdout);
   }
 }
 
