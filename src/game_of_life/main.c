@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include <raylib.h>
 
@@ -9,9 +10,9 @@ int main(void)
   int screen_height = 600;
 
   InitWindow(screen_width, screen_height, "SmoothLife GPU");
-  SetTargetFPS(5);
+  SetTargetFPS(60);
 
-  Image image = GenImagePerlinNoise(screen_width, screen_height, 0, 0, 10.0f);
+  Image image = GenImagePerlinNoise(screen_width, screen_height, 0, 0, 5.0f);
   // Image image = GenImageCellular(screen_width, screen_height, screen_width/6);
   // Image image = GenImageWhiteNoise(screen_width, screen_height, 0.9f);
   
@@ -32,19 +33,19 @@ int main(void)
   size_t i = 0; // swap between 0, 1 by using i = 1 - i;
 
   while (!WindowShouldClose()) {
-    BeginTextureMode(state[1]);
+    BeginTextureMode(state[1 - i]);
       ClearBackground(BLACK);
       BeginShaderMode(shader);
-        DrawTexture(state[0].texture, 0, 0, WHITE);
+        DrawTexture(state[i].texture, 0, 0, WHITE);
       EndShaderMode();
     EndTextureMode();
 
+    i = 1 - i; // swap between 0, 1
+
     BeginDrawing();
       ClearBackground(BLACK);
-      DrawTexture(state[1].texture, 0, 0, WHITE);
+      DrawTexture(state[i].texture, 0, 0, WHITE);
     EndDrawing();
-
-    //i = 1 - i; // swap between 0, 1
   }
 
   CloseWindow();

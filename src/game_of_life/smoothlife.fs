@@ -1,7 +1,8 @@
 #version 330 
 
-const float ra = 9;
-const float ri = ra/3;
+const float PI = 3.14159265359;
+const float ra = 9.0;
+const float ri = ra/3.0;
 const float alpha = 0.028;
 // const float alpha_m = 0.147;
 const float b1 = 0.278;
@@ -27,15 +28,17 @@ out vec4 finalColor;
 
 void main()
 {
-  float cx = floor(fragTexCoord.x*resolution.x);
-  float cy = floor(fragTexCoord.y*resolution.y);
-  float m = .0, M = .0; 
-  float n = .0, N = .0;
-
+  float cx = fragTexCoord.x*resolution.x;
+  float cy = (1 - fragTexCoord.y)*resolution.y;
+  
   float sq_ri = ri*ri, sq_ra = ra*ra;
+  
+  float m = 0, n = 0;
+  float M = PI*sq_ri; 
+  float N = PI*sq_ra - M;
 
-  for (float dy = -(ra - 1.0); dy <= (ra - 1.0); dy += 1.0) {
-    for (float dx = -(ra - 1.0); dx <= (ra - 1.0); dx += 1.0) {
+  for (float dy = -ra; dy <= ra; dy += 1.0) {
+    for (float dx = -ra; dx <= ra; dx += 1.0) {
       
       float x = cx + dx;
       float y = cy + dy;
@@ -44,10 +47,8 @@ void main()
 
       if (sq_dx + sq_dy <= sq_ri) {
         m += grid(y, x);
-        M += 1.0;
       } else if (sq_dx + sq_dy <= sq_ra) {
         n += grid(y, x);
-        N += 1.0;
       }
 
     }
@@ -57,7 +58,7 @@ void main()
   m /= M;
   float q = s(n, m);
   float diff = 2.0*q - 1.0;
-  float v = grid(cx, cy) + dt*diff;
+  float v = clamp(grid(cx, cy) + dt*diff, 0.0, 1.0);
 
   finalColor = vec4(v, v, v, 1);
 }
