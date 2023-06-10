@@ -9,9 +9,9 @@ int main(void)
   int screen_height = 600;
 
   InitWindow(screen_width, screen_height, "SmoothLife GPU");
-  SetTargetFPS(60);
+  SetTargetFPS(10);
 
-  Image image = GenImagePerlinNoise(screen_width, screen_height, 0, 0, 5.0f);
+  Image image = GenImagePerlinNoise(screen_width, screen_height, 0, 0, 10.0f);
   // Image image = GenImageCellular(screen_width, screen_height, screen_width/6);
   // Image image = GenImageWhiteNoise(screen_width, screen_height, .5f);
   
@@ -21,6 +21,9 @@ int main(void)
   UpdateTexture(state[0].texture, image.data);
 
   Shader shader = LoadShader(NULL, "./smoothlife.fs");
+  Vector2 resolution = {screen_width, screen_height};
+  int resolution_loc = GetShaderLocation(shader, "resolution");
+  SetShaderValue(shader, resolution_loc, &resolution, SHADER_UNIFORM_VEC2);
   
   size_t i = 0; // swap between 0, 1 by using i = 1 - i;
 
@@ -28,16 +31,16 @@ int main(void)
     BeginTextureMode(state[1 - i]);
       ClearBackground(BLACK);
       BeginShaderMode(shader);
-        DrawTexture(state[i].texture, 0, 0, BLUE);
+        DrawTexture(state[i].texture, 0, 0, WHITE);
       EndShaderMode();
     EndTextureMode();
 
     BeginDrawing();
       ClearBackground(BLACK);
-      DrawTexture(state[1 - i].texture, 0, 0, BLUE);
+      DrawTexture(state[1 - i].texture, 0, 0, WHITE);
     EndDrawing();
 
-    i = 1 - i; // swap between 0, 1
+    // i = 1 - i; // swap between 0, 1
   }
 
   CloseWindow();

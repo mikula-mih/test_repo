@@ -33,7 +33,7 @@ const float dt = 0.05f;
 float rand_float(void);
 void set_grid_rand(void);
 void display_grid(void);
-void display_grid_diff(float grid[HEIGHT][WIDTH]);
+void display_grid_value(float grid[HEIGHT][WIDTH]);
 // computation functions
 int emod(int, int);
 float sigma_1(float, float);
@@ -43,6 +43,7 @@ float s(float, float);
 void clamp(float *, float, float);
 // simulation functions
 void compute_grid_diff(void);
+void apply_grid_diff(void);
 
 /* =============
  * Main Function
@@ -51,19 +52,13 @@ void compute_grid_diff(void);
 int main(void)
 {
   srand(time(0));
-  
   set_grid_rand();
   
   display_grid();
   // Simulation Loop
   for (;;) {
     compute_grid_diff();
-    for (size_t y = 0; y < HEIGHT; ++y) {
-      for (size_t x = 0; x < WIDTH; ++x) {
-        grid[y][x] += dt * grid_diff[y][x];
-        clamp(&grid[y][x], 0, 1);
-      }
-    }
+    apply_grid_diff();
     display_grid();
   }
 
@@ -161,7 +156,7 @@ void compute_grid_diff(void)
   }
 }
 
-void display_grid_diff(float grid[HEIGHT][WIDTH])
+void display_grid_value(float grid[HEIGHT][WIDTH])
 {
   for (size_t i = 0; i < HEIGHT; ++i) {
     for (size_t j = 0; j < WIDTH; ++j) {
@@ -175,5 +170,16 @@ void clamp(float *x, float lower, float higher)
 {
   if (*x < lower) *x = lower; 
   if (*x > higher) *x = higher; 
+}
+
+void apply_grid_diff(void)
+{
+  float *ptr_grid = &grid[0][0];
+  float *ptr_grid_diff = &grid_diff[0][0];
+
+  for (size_t i = 0; i < HEIGHT*WIDTH; ++i) {
+    *ptr_grid += *ptr_grid_diff++ * dt;
+    clamp(ptr_grid++, 0, 1);
+  }
 }
 
