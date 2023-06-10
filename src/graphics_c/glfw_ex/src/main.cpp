@@ -1,40 +1,26 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <chrono>
 
-#include "Renderer/ShaderProgram.h"
+#include "Game/Game.h"
 #include "Resources/ResourceManager.h"
-#include "Renderer/Texture2D.h"
+#include "Renderer/Renderer.h"
+#include "Physics/PhysicsEngine.h"
 
-GLfloat point[] = {
-     0.0f,  50.f, 0.0f,
-     50.f, -50.f, 0.0f,
-    -50.f, -50.f, 0.0f
-};
+static constexpr unsigned int SCALE = 3;
+static constexpr unsigned int BLOCK_SIZE = 16;
+glm::uvec2 g_windowSize(SCALE * 16 * BLOCK_SIZE, SCALE * 15 * BLOCK_SIZE);
+std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
-GLfloat colors[] = {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-};
-
-GLfloat texCoord[] = {
-    0.5f, 1.0f,
-    1.0f, 0.0f,
-    0.0f, 0.0f
-};
-
-glm::ivec2 g_windowSize(640, 480);
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
     g_windowSize.x = width;
     g_windowSize.y = height;
-    glViewport(0, 0, width, height);
+    g_game->setWindowSize(g_windowSize);
 }
 
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
@@ -43,6 +29,7 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
     {
         glfwSetWindowShouldClose(pWindow, GL_TRUE);
     }
+    g_game->setKey(key, action);
 }
 
 int main(int argc, char** argv)
@@ -78,88 +65,43 @@ int main(int argc, char** argv)
         std::cout << "Can't load GLAD!" << std::endl;
     }
 
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "Renderer: " << RenderEngine::Renderer::getRendererStr() << std::endl;
+    std::cout << "OpenGL version: " << RenderEngine::Renderer::getVersionStr() << std::endl;
 
-    glClearColor(1, 1, 0, 1);
+    RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setDepthTest(true);
 
     {
-        ResourceManager resourceManager(argv[0]);
-        auto pDefaultShaderProgram = resourceManager.loadShaders("DefaultShader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
-        if (!pDefaultShaderProgram)
-        {
-            std::cerr << "Can't create shader program: " << "DefaultShader" << std::endl;
-            return -1;
-        }
+        ResourceManager::setExecutablePath(argv[0]);
+        Physics::PhysicsEngine::init();
+        g_game->init();
 
-        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
-
-        GLuint points_vbo = 0;
-        glGenBuffers(1, &points_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
-
-        GLuint colors_vbo = 0;
-        glGenBuffers(1, &colors_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-        GLuint texCoord_vbo = 0;
-        glGenBuffers(1, &texCoord_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(texCoord), texCoord, GL_STATIC_DRAW);
-
-        GLuint vao = 0;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        pDefaultShaderProgram->use();
-        pDefaultShaderProgram->setInt("tex", 0);
-
-        glm::mat4 modelMatrix_1 = glm::mat4(1.f);
-        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(100.f, 50.f, 0.f));
-
-        glm::mat4 modelMatrix_2 = glm::mat4(1.f);
-        modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(590.f, 50.f, 0.f));
-
-        glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windowSize.x), 0.f, static_cast<float>(g_windowSize.y), -100.f, 100.f);
-
-        pDefaultShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+        //glfwSetWindowSize(pWindow, static_cast<int>(3 * g_game->getCurrentWidth()), static_cast<int>(3 * g_game->getCurrentHeight()));
+        auto lastTime = std::chrono::high_resolution_clock::now();
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
+            /* Poll for and process events */
+            glfwPollEvents();
+
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
+            lastTime = currentTime;
+            g_game->update(duration);
+            Physics::PhysicsEngine::update(duration);
+
             /* Render here */
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            pDefaultShaderProgram->use();
-            glBindVertexArray(vao);
-            tex->bind();
-
-            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_1);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_2);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            RenderEngine::Renderer::clear();
+            
+            g_game->render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);
-
-            /* Poll for and process events */
-            glfwPollEvents();
         }
+        Physics::PhysicsEngine::terminate();
+        g_game = nullptr;
+        ResourceManager::unloadAllResources();
     }
 
     glfwTerminate();

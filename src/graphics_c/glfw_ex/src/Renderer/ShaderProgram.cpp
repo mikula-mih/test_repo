@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace Renderer {
+namespace RenderEngine {
     ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader)
     {
         GLuint vertexShaderID;
@@ -57,7 +57,7 @@ namespace Renderer {
         if (!success)
         {
             GLchar infoLog[1024];
-            glGetShaderInfoLog(shaderID, 1024, nullptr, infoLog);
+            glGetProgramInfoLog(shaderID, 1024, nullptr, infoLog);
             std::cerr << "ERROR::SHADER: Compile-time error:\n" << infoLog << std::endl;
             return false;
         }
@@ -97,6 +97,11 @@ namespace Renderer {
     void ShaderProgram::setInt(const std::string& name, const GLint value)
     {
         glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+    }
+
+    void ShaderProgram::setFloat(const std::string& name, const GLfloat value)
+    {
+        glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
     }
 
     void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4& matrix)
