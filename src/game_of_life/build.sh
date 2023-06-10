@@ -16,8 +16,4 @@ echo "\n================================="
 echo   "=== Running SmoothLife_GPU... ==="
 echo   "=================================\n"
 ./$BUILD/smoothlife_gpu
-set -x
 
-if [ -d $BUILD ]; then
-  rm -r $BUILD
-fi
