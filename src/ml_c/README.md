@@ -1,3 +1,12 @@
+# Machine Learning in C - Refactoring GUI
+
+Date: ...
+__References:__
+- imgui: [https://github.com/ocornut/imgui]
+- Qt: [https://doc.qt.io/qt-6/qlayout.html]
+
+
+
 # Machine Learning in C - New Framework
 
 Date: 12.06.2023
