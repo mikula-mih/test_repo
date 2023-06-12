@@ -24,6 +24,7 @@ Date: 29.05.23
 __References:__
 - [https://en.wikipedia.org/wiki/Vornoi_diagram]
 - PPM Image Format: [https://en.wikipedia.org/wiki/Netpbm]
+- Double Buffering, Multiple Buffering: [https://en.wikipedia.org/wiki/Multiple_buffering]
 
 # GLFW example
 
