@@ -1,2 +1,3 @@
 *.ppm
+*._failure.png
 bin/
