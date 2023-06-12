@@ -1,3 +1,5 @@
 *.ppm
-*._failure.png
-bin/
+build/
+*.swp
+nobuild
+nobuild.old
