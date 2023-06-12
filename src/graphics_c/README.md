@@ -1,10 +1,19 @@
+# Graphics Library in C: Testing Framework
+
+> `olive.c`
+
+Date: 12.06.23
+__References:__
+- gdb df -- GDB frontend for Linux: [https://github.com/nakst/gf]
+
+
 # Graphics Library in C
+
+> `olive.c`
 
 Date: 29.05.23
 __References:__
 - PPM format: [http://people.uncw.edu/tompkinsj/112/texnh/assignments/imageFormat.html]
-
-> `olive.c`
 
 # [Pure C] Actually Using School Math IRL
 

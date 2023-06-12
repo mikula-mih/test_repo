@@ -2,4 +2,7 @@
 
 set -xe
 
-cc -Wall -Wextra -o example example.c
+mkdir -p ./bin/
+mkdir -p ./imgs/
+cc -Wall -Wextra -ggdb -o ./bin/example example.c
+./bin/example
