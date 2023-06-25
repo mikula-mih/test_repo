@@ -40,3 +40,8 @@ __References:__
 Date: 03.06.23
 __References:__
 
+# PNG Parser
+
+Date: 14.06.23
+__References:__
+- PNG specification: [https://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html]
