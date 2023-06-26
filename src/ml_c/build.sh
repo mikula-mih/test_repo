@@ -2,11 +2,16 @@
 
 set -xe
 
-#clang -Wall -Wextra -o twice twice.c
-#clang -Wall -Wextra -o gates gates.c -lm
-#clang -Wall -Wextra -o xor xor.c -lm
-clang -Wall -Wextra -o nn nn.c -lm
+BUILD=release
 
-#./xor
+if [ ! -d "$BUILD" ]; then
+  mkdir $BUILD
+fi
 
+clang -Wall -Wextra -o ./$BUILD/twice twice.c
+clang -Wall -Wextra -o ./$BUILD/gates gates.c -lm
+clang -Wall -Wextra -o ./$BUILD/xor xor.c -lm
+clang -Wall -Wextra -o ./$BUILD/nn nn.c -lm
+
+./$BUILD/nn
 
