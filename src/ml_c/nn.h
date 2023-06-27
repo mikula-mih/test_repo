@@ -21,16 +21,19 @@
 typedef struct {
   size_t rows;
   size_t cols;
+  size_t stride;
   float *es;
 } Mat;
 
-#define MAT_AT(m, i, j) (m).es[(i)*(m).cols + (j)]
+#define MAT_AT(m, i, j) (m).es[(i)*(m).stride + (j)]
 
 float rand_float(void);
 float sigmoidf(float);
 
 Mat mat_alloc(const size_t rows, const size_t cols);
 void mat_rand(const Mat, const float low, const float high);
+Mat mat_row(const Mat, const size_t row);
+void mat_copy(Mat dst, const Mat src);
 Mat mat_dot(const Mat, const Mat);
 Mat mat_sum(Mat, const Mat);
 void mat_sig(Mat);
@@ -56,6 +59,7 @@ Mat mat_alloc(const size_t rows, const size_t cols)
   Mat m = {
     .rows = rows,
     .cols = cols,
+    .stride = cols,
     .es = NN_MALLOC(sizeof(*m.es)*rows*cols)
   };
 
@@ -80,6 +84,28 @@ Mat mat_dot(const Mat a, const Mat b)
     }
   }
   return dst;
+}
+
+Mat mat_row(const Mat m, const size_t row)
+{
+  return (Mat){
+    .rows = 1,
+    .cols = m.cols,
+    .stride = m.stride,
+    .es = &MAT_AT(m, row, 0),
+  };
+}
+
+void mat_copy(Mat dst, const Mat src)
+{
+  NN_ASSERT(dst.rows == src.rows && dst.cols == src.cols);
+
+  for (size_t i = 0; i < dst.rows; ++i) {
+    for (size_t j = 0; j < dst.cols; ++j) {
+      MAT_AT(dst, i, j) = MAT_AT(src, i, j);
+    }
+  }
+
 }
 
 Mat mat_sum(Mat dst, const Mat a)
