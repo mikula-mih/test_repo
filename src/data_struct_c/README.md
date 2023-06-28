@@ -6,3 +6,9 @@ References:
 - Graphviz: [https://graphvix.org]
 
 > data structure for Autocomplete
+
+```console
+./build.sh
+xdg-open trie.svg
+./trie complete Ap
+```
