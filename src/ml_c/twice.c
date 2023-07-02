@@ -37,31 +37,35 @@ float cost(float w, float b)
   return result;
 }
 
+float dcost(float w) // using derivatives
+{
+  float result = 0.0f;
+  size_t n = train_count;
+  for (size_t i = 0; i < n; ++i) {
+    float x = train[i][0];
+    float y = train[i][1];
+    result += 2*(x*w - y)*x;
+  }
+  result /= n;
+  return result;
+}
+
 int main()
 {
-  // srand(time(0));
-  srand(69);
-  // y = x*w;
+  srand(time(0));
   float w = rand_float()*10.0f;
-  float b = rand_float()*5.0f;
 
-  printf("%f %f\n", w, b);
-  printf("%zu\n", train_count);
-
-  float eps = 1e-3;
   float rate = 1e-3;
 
-  printf("err: %f\n", cost(w, b));
+  printf("err: %f\n", dcost(w));
   for (size_t i = 0; i < 5000; i++) {
-    float dcost = (cost(w + eps, b) - cost(w, b))/eps;
-    float bcost = (cost(w, b + eps) - cost(w, b))/eps;
-    w -= rate*dcost;
-    b -= rate*bcost;
-    printf("cost: %f, w = %f, b = %f\n", cost(w, b), w, b);
+    float dw = dcost(w); 
+    w -= rate*dw;
+    printf("cost: %f, w = %f\n", dcost(w), w);
   }
 
   printf("-------------------------------------------\n");
-  printf("w = %f, b = %f\n", w, b);
+  printf("w = %f\n", w);
 
   return 0;
 }

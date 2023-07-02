@@ -17,5 +17,5 @@ pdflatex grad.tex
 mv grad.pdf ./$BUILD
 rm grad.log grad.aux
 
-./$BUILD/nn
+#./$BUILD/nn
 
