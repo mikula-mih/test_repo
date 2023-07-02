@@ -1,0 +1,60 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\begin{document}
+\section{Gradient Descent}
+
+If we keep decreasing the $\epsilon$ in our Finite Difference approach we effectively get the Derivative of the Cost Function.
+
+\begin{align}
+  C'(w) = \lim_{\epsilon \to 0}\frac{C(w + \epsilon) - C(w)}{\epsilon}
+\end{align}
+
+Let's compute the derivatives of all our models. Throughout the entire paper $n$ means the amount of samples in the training set.
+
+\subsection{Linear Model}
+
+\def\d{2.0}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (X) at ({-\d*0.75}, 0) {$x$};
+    \node[shape=circle,draw=black] (N) at (0, 0) {$w$};
+    \node (Y) at ({\d*0.75}, 0) {$y$};
+    \path[->] (X) edge (N);
+    \path[->] (N) edge (Y);
+  \end{tikzpicture}
+\end{center}
+
+\begin{align}
+  y &= x \cdot w
+\end{align}
+
+\subsection{Cost}
+
+\begin{align}
+  C(w) &= \frac{1}{n}\sum_{i=1}^{n}(x_{i}w -y_{i})^2 \\
+  C'(w) 
+       &= \left(\frac{1}{n}{\sum_{i=1}^{n}(x_{i}w -y_{i})^2}\right)' = \\
+       &= \frac{1}{n}\sum_{i=1}^{n}2(x_iw - y_i)x_i
+\end{align}
+
+\subsection{One Neuron Model with 2 inputs}
+
+\subsection{Cost}
+
+\subsection{Two Neuron Model with 1 inputs}
+
+\subsection{Feed-Forward}
+
+\subsection{Back-Propagation}
+
+\subsection{Arbitrary Neurons Model with 1 input}
+
+\subsection{Feed-Forward}
+
+\subsection{Back-Propagation}
+
+\end{document}

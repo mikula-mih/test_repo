@@ -36,7 +36,7 @@ sample nand_train[] = {
 };
 // #define train_count (sizeof(train)/sizeof(train[0]))
 
-sample *train = or_train;
+sample *train = nand_train;
 size_t train_count = 4;
 
 float rand_float(void)
